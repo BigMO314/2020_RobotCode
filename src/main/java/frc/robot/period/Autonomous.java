@@ -22,12 +22,26 @@ public class Autonomous {
 
     }
 
+    public enum Position {
+        kLeft("Left") ,
+        kCenter("Right") , 
+        kRight("Right");
+
+
+        public final String label;
+        private Position(String label){
+            this.label = label;
+        }
+    }
+
     private Chassis sysChassis = Chassis.getInstance();
     private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
     private SendableChooser<Sequence> chsSequence = new SendableChooser<Sequence>();
     private Sequence selectedSequence;
+    private SendableChooser<Position> chsPosition = new SendableChooser<Position>();
+   
     private  int stage;
 
     private Timer tmrTimeout = new Timer();
@@ -42,7 +56,11 @@ public class Autonomous {
             chsSequence.addOption(tempSequence.label, tempSequence);
         chsSequence.setDefaultOption(Sequence.kNone.label , Sequence.kNone);
 
-        SmartDashboard.putData("Autonomous Chooser" , chsSequence);
+        SmartDashboard.putData("Autonomous Sequence" , chsSequence);
+
+        for(Position tempPosition : Position.values())
+            chsPosition.addOption(tempPosition.label , tempPosition);
+        SmartDashboard.putData("Position Selector" , chsPosition);
     }
 
 
