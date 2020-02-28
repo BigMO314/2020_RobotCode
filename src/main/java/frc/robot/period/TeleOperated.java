@@ -6,12 +6,10 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.molib.humancontrols.XboxController;
 import frc.robot.subsystem.Chassis;
 import frc.robot.subsystem.Indexer;
-import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
 public class TeleOperated {
     private Chassis sysChassis = Chassis.getInstance();
-    private Intake sysIntake =  Intake.getInstance();
     private Indexer sysIndexer = Indexer.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
@@ -53,25 +51,24 @@ public class TeleOperated {
 
         // Intake 
         if (ctlOperator.getXButton()){
-            sysIntake.armExtend();
-            sysIntake.enableRoller();
+            sysIndexer.armExtend();
+            sysIndexer.enableRoller();
         } else if (ctlOperator.getYButtonPressed()){
             tmrOuttake.reset();
-            sysIntake.armExtend();
+            sysIndexer.armExtend();
 
         // Outtake
         } else if (ctlOperator.getYButton()){
             if (tmrOuttake.get() > 0.25){
-                sysIntake.reverseRoller();
+                sysIndexer.reverseRoller();
             } 
         // Disable Intake if neither buttons are pressed
         } else { 
-            sysIntake.armRetract();
-            sysIntake.disableRoller();
+            sysIndexer.armRetract();
+            sysIndexer.disableRoller();
         }
 
         sysChassis.update();
-        sysIntake.update(); 
         sysIndexer.update();
         sysShooter.update();
 

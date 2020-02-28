@@ -7,7 +7,6 @@ import frc.molib.Console;
 import frc.robot.Robot;
 import frc.robot.subsystem.Chassis;
 import frc.robot.subsystem.Indexer;
-import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
 public class Autonomous {
@@ -24,7 +23,6 @@ public class Autonomous {
     }
 
     private Chassis sysChassis = Chassis.getInstance();
-    private Intake sysIntake =  Intake.getInstance();
     private Indexer sysIndexer = Indexer.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
@@ -102,7 +100,6 @@ public class Autonomous {
         }
 
         sysChassis.update();
-        sysIntake.update();
         sysIndexer.update();
         sysShooter.update();
         

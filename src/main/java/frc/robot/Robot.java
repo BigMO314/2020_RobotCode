@@ -33,7 +33,6 @@ public class Robot extends TimedRobot {
     private Autonomous prdAutonomous = Autonomous.getInstance();
   
     private Chassis sysChassis = Chassis.getInstance();
-    private Intake sysIntake = Intake.getInstance();
     private Indexer sysIndexer = Indexer.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
@@ -42,7 +41,6 @@ public class Robot extends TimedRobot {
     public static void disableSystems(){
 
         INSTANCE.sysChassis.disable();
-        INSTANCE.sysIntake.disableRoller();
         INSTANCE.sysIndexer.disable();
         INSTANCE.sysShooter.disable();
 
