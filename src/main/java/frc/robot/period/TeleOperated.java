@@ -5,12 +5,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.molib.humancontrols.XboxController;
 import frc.robot.subsystem.Chassis;
-import frc.robot.subsystem.Indexer;
+import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
 public class TeleOperated {
     private Chassis sysChassis = Chassis.getInstance();
-    private Indexer sysIndexer = Indexer.getInstance();
+    private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
     private Joystick ctlDriver_L = new Joystick(0);
@@ -23,10 +23,6 @@ public class TeleOperated {
 
     private static final TeleOperated INSTANCE = new TeleOperated();
     public static TeleOperated getInstance() { return INSTANCE; }
-
-    public void init(){
-
-    }
     
 
     public void update(){
@@ -38,39 +34,40 @@ public class TeleOperated {
 
         // Shooter
         if (ctlDriver_R.getTrigger()){  
-            sysShooter.enable();
-        } else sysShooter.disable();
+            sysShooter.enableFlywheel();
+        } else sysShooter.disableFlywheel();
 
         // Indexing system
         if (ctlDriver_R.getRawButton(2)){
-            sysIndexer.enable();
-        } else sysIndexer.disable();
+            sysShooter.enableHoopper();
+        } else sysShooter.disableHopper();
         
 
         //  - OPERATOR CONTROLS - (Intake)
 
         // Intake 
         if (ctlOperator.getXButton()){
-            sysIndexer.armExtend();
-            sysIndexer.enableRoller();
+            sysIntake.armExtend();
+            sysIntake.enableRoller();
         } else if (ctlOperator.getYButtonPressed()){
             tmrOuttake.reset();
-            sysIndexer.armExtend();
+            sysIntake.armExtend();
 
         // Outtake
         } else if (ctlOperator.getYButton()){
             if (tmrOuttake.get() > 0.25){
-                sysIndexer.reverseRoller();
+                sysIntake.reverseRoller();
             } 
         // Disable Intake if neither buttons are pressed
         } else { 
-            sysIndexer.armRetract();
-            sysIndexer.disableRoller();
+            sysIntake.armRetract();
+            sysIntake.disableRoller();
         }
 
         sysChassis.update();
-        sysIndexer.update();
+        sysIntake.update(); 
         sysShooter.update();
+
 
         
 

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.molib.Console;
 import frc.robot.Robot;
 import frc.robot.subsystem.Chassis;
-import frc.robot.subsystem.Indexer;
+import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
 public class Autonomous {
@@ -23,7 +23,7 @@ public class Autonomous {
     }
 
     private Chassis sysChassis = Chassis.getInstance();
-    private Indexer sysIndexer = Indexer.getInstance();
+    private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
     private SendableChooser<Sequence> chsSequence = new SendableChooser<Sequence>();
@@ -100,7 +100,7 @@ public class Autonomous {
         }
 
         sysChassis.update();
-        sysIndexer.update();
+        sysIntake.update();
         sysShooter.update();
         
         

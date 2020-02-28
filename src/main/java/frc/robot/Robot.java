@@ -17,7 +17,6 @@ import frc.molib.DashTable;
 import frc.robot.period.TeleOperated;
 import frc.robot.period.Autonomous;
 import frc.robot.subsystem.Chassis;
-import frc.robot.subsystem.Indexer;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
@@ -33,7 +32,7 @@ public class Robot extends TimedRobot {
     private Autonomous prdAutonomous = Autonomous.getInstance();
   
     private Chassis sysChassis = Chassis.getInstance();
-    private Indexer sysIndexer = Indexer.getInstance();
+    private Intake sysIntake = Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
     public static DashTable tblTroubleshooting = new DashTable("Troubleshooting");
@@ -41,7 +40,7 @@ public class Robot extends TimedRobot {
     public static void disableSystems(){
 
         INSTANCE.sysChassis.disable();
-        INSTANCE.sysIndexer.disable();
+        INSTANCE.sysIntake.disableRoller();
         INSTANCE.sysShooter.disable();
 
     }
@@ -50,33 +49,36 @@ public class Robot extends TimedRobot {
     
      
   @Override
-        public void robotInit() {
+     public void robotInit() {
     
   }
 
  
   @Override
-        public void robotPeriodic() {
+     public void robotPeriodic() {
   }
 
  
   @Override
-        public void autonomousInit() { prdAutonomous.init(); }
+    public void autonomousInit() {
+    
+  }
 
   
   @Override
-        public void autonomousPeriodic() { prdAutonomous.update(); }
+    public void autonomousPeriodic() {
+ 
+  }
 
  
   @Override
-        public void teleopInit() { prdTeleOperated.init(); }
-
-  @Override
-        public void teleopPeriodic() { prdTeleOperated.update(); }
+    public void teleopPeriodic() {
+        prdTeleOperated.update();
+  }
 
  
   @Override
-        public void testPeriodic() {
+    public void testPeriodic() {
     
   }
   
