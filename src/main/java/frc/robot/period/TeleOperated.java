@@ -25,6 +25,10 @@ public class TeleOperated {
 
     private static final TeleOperated INSTANCE = new TeleOperated();
     public static TeleOperated getInstance() { return INSTANCE; }
+
+    public void init(){
+
+    }
     
 
     public void update(){
@@ -66,6 +70,10 @@ public class TeleOperated {
             sysIntake.disableRoller();
         }
 
+        sysChassis.update();
+        sysIntake.update(); 
+        sysIndexer.update();
+        sysShooter.update();
 
         
 

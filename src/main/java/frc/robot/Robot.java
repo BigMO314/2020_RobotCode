@@ -52,42 +52,33 @@ public class Robot extends TimedRobot {
     
      
   @Override
-     public void robotInit() {
+        public void robotInit() {
     
   }
 
  
   @Override
-     public void robotPeriodic() {
+        public void robotPeriodic() {
   }
 
  
   @Override
-    public void autonomousInit() {
-    
-  }
+        public void autonomousInit() { prdAutonomous.init(); }
 
   
   @Override
-    public void autonomousPeriodic() {
- 
-  }
+        public void autonomousPeriodic() { prdAutonomous.update(); }
 
  
   @Override
-    public void teleopPeriodic() {
-        
-        prdTeleOperated.update();
-        
-        sysChassis.update();
-        sysIntake.update(); 
-        sysIndexer.update();
-        sysShooter.update();
-  }
+        public void teleopInit() { prdTeleOperated.init(); }
+
+  @Override
+        public void teleopPeriodic() { prdTeleOperated.update(); }
 
  
   @Override
-    public void testPeriodic() {
+        public void testPeriodic() {
     
   }
   
