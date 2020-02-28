@@ -8,6 +8,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import frc.molib.PIDController;
 import frc.molib.sensors.MagEncoder;
+import frc.molib.vision.Limelight;
 
 
 
@@ -21,11 +22,13 @@ public class Chassis {
 
     private MagEncoder encDrive = new MagEncoder(mtrDrive_L1);
 
-    private final AHRS gyrDrive = new AHRS();
+    private final AHRS gyrDrive = new AHRS(); 
 
     private PIDController pidDriveAngle = new PIDController(0.0, 0.0, 0.0);
     private PIDController pidDriveDistance = new PIDController(0.0, 0.0, 0.0);
-    private PIDController pidDriveStraight = new PIDController(0.0 , 0.0 , 0.0);
+    private PIDController pidDriveStraight = new PIDController(0.0 , 0.0 , 0.0); // Helps to prevent the Drivetrain from drifting
+    private PIDController pidDriveVision = new PIDController(0.0 , 0.0 , 0.0); // Limelight PID
+   
 
 
     private static Chassis INSTANCE = new Chassis();
@@ -50,24 +53,55 @@ public class Chassis {
 
     public void setArcade(double throttle, double steering) { setDrive(throttle + steering, throttle - steering); }
 
-    public double getAngle() { return gyrDrive.getAngle(); }
+    public void enableAnglePID(){ 
+        pidDriveAngle.enable();
+        pidDriveDistance.disable();
+        pidDriveStraight.disable();
+        pidDriveVision.disable();
+    }
+
+    public void enableDistancePID(){ 
+        pidDriveAngle.disable();
+        pidDriveDistance.enable();
+        pidDriveStraight.enable();
+        pidDriveVision.disable();
+    }
+
+    public void enableVisionPID(){ 
+        pidDriveAngle.enable();
+        pidDriveDistance.disable();
+        pidDriveStraight.disable();
+        pidDriveVision.disable();
+    }
+
+
+
+    // [ Angle PID functions ]
+    
+    /* Comments to functions here apply to all following sections
+    */
+
+    public double getAngle() { return gyrDrive.getAngle(); } // Return the current angle (from gyro)
     public void resetAngle() { gyrDrive.reset(); }
-    public boolean isAtAngle() { return pidDriveAngle.atSetpoint();}
+    public boolean isAtAngle() { return pidDriveAngle.atSetpoint();} // Is true only if the desired angle has been calculated
     public void goToAngle(double angle){ goToAngle(angle, false); }
+    // Overrides PID to reset if it is not already enabled or reset
     public void goToAngle(double angle, boolean reset) {
         if (!pidDriveAngle.isEnabled() || reset) {
             pidDriveAngle.reset();
+
+            enableAnglePID();
             
             resetAngle();
           
         }
-
-        pidDriveAngle.enable();
-        pidDriveDistance.disable();
-        pidDriveStraight.disable();
         
         pidDriveAngle.setSetpoint(angle);
     }
+
+
+    // [ Distance PID functions ]
+
     public double getDistance() { return encDrive.getDistance(); }
     public void resetDistance() { encDrive.reset(); }
     public boolean isAtDistance() { return pidDriveDistance.atSetpoint() && pidDriveStraight.atSetpoint();}
@@ -85,21 +119,60 @@ public class Chassis {
         pidDriveAngle.disable();
         pidDriveDistance.enable();
         pidDriveStraight.enable();
+        pidDriveVision.disable();
 
         pidDriveDistance.setSetpoint(distance);
         pidDriveStraight.setSetpoint(0.0);
     }
 
-    public void disable(){
+    //  [ Vision PID functions ]
+
+    public double getVisionPosX() { return Limelight.getPosX(); }
+    public boolean isAtVisionTarget() { return pidDriveVision.atSetpoint();}
+    public void goToVisionTarget() {
 
         pidDriveAngle.disable();
         pidDriveDistance.disable();
         pidDriveStraight.disable();
+        pidDriveVision.enable();
+
+        pidDriveVision.setSetpoint(0.0);
+    }
+
+    public void disableAnglePID(){
+        pidDriveAngle.disable();
+    }
+
+    public void disableDistancePID(){
+        pidDriveDistance.disable();
+    }
+
+    public void disableStraightPID(){
+        pidDriveStraight.disable();
+    }
+    
+    public void disableVisionPID(){
+        pidDriveVision.disable();
+    }
+
+    public void disable(){
+
+        disableAnglePID();
+        disableDistancePID();
+        disableStraightPID();
+        disableVisionPID();
+
         setDrive( 0.0 , 0.0 );
     }
 
-    public void update(){
+    public void init(){
 
+    }
+
+    // Main update loop for the Chassis
+    public void update(){
+        
+        // Drive to desired distance
         if (pidDriveDistance.isEnabled()) {
             setArcade(pidDriveDistance.calculate(getDistance()) , pidDriveStraight.calculate(getAngle()));
         } else if (pidDriveAngle.isEnabled()) {

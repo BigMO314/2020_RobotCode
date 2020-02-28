@@ -11,8 +11,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 public class Shooter { 
     private VictorSPX mtrHopper = new VictorSPX(5);
-    private TalonFX mtrFlywheel_L = new TalonFX(7);
-    private TalonFX mtrFlywheel_R = new TalonFX(8);
+    private TalonFX mtrFlywheel_L = new TalonFX(6);
+    private TalonFX mtrFlywheel_R = new TalonFX(7);
 
     private MagEncoder encFlywheel = new MagEncoder(mtrFlywheel_L);
 
@@ -41,7 +41,7 @@ public class Shooter {
         mtrFlywheel_L.setInverted(false);
         mtrFlywheel_R.setInverted(true);  
 
-        encFlywheel.configDistancePerPulse(1.0/2048.0);
+        encFlywheel.configDistancePerPulse(1.0/2048.0); // DPP
 
         pidFlywheelSpeed.configOutputRange(-1.0, 1.0);
 
