@@ -14,6 +14,7 @@ import frc.molib.vision.Limelight;
 
 public class Chassis {
 
+
     private TalonFX mtrDrive_L1 = new TalonFX(0);
     private TalonFX mtrDrive_L2 = new TalonFX(1);
 
@@ -46,12 +47,16 @@ public class Chassis {
         mtrDrive_R2.setInverted(false);
     }
 
+    // Two functions that set Tank drive and Arcade drive.
+    
     public void setDrive(double lPower , double rPower){
         this.lPower = lPower;
         this.rPower = rPower;
     }
 
     public void setArcade(double throttle, double steering) { setDrive(throttle + steering, throttle - steering); }
+
+    // /Enable PIDs/
 
     public void enableAnglePID(){ 
         pidDriveAngle.enable();
@@ -74,70 +79,7 @@ public class Chassis {
         pidDriveVision.disable();
     }
 
-
-
-    // [ Angle PID functions ]
-    
-    /* Comments to functions here apply to all following sections
-    */
-
-    public double getAngle() { return gyrDrive.getAngle(); } // Return the current angle (from gyro)
-    public void resetAngle() { gyrDrive.reset(); }
-    public boolean isAtAngle() { return pidDriveAngle.atSetpoint();} // Is true only if the desired angle has been calculated
-    public void goToAngle(double angle){ goToAngle(angle, false); }
-    // Overrides PID to reset if it is not already enabled or reset
-    public void goToAngle(double angle, boolean reset) {
-        if (!pidDriveAngle.isEnabled() || reset) {
-            pidDriveAngle.reset();
-
-            enableAnglePID();
-            
-            resetAngle();
-          
-        }
-        
-        pidDriveAngle.setSetpoint(angle);
-    }
-
-
-    // [ Distance PID functions ]
-
-    public double getDistance() { return encDrive.getDistance(); }
-    public void resetDistance() { encDrive.reset(); }
-    public boolean isAtDistance() { return pidDriveDistance.atSetpoint() && pidDriveStraight.atSetpoint();}
-    public void goToDistance(double distance){ goToDistance(distance, false); }
-    public void goToDistance(double distance, boolean reset) {
-        if (!pidDriveDistance.isEnabled() || reset) {
-            pidDriveDistance.reset();
-            pidDriveStraight.reset();
-
-           
-            resetAngle();
-            resetDistance();
-        }
-
-        pidDriveAngle.disable();
-        pidDriveDistance.enable();
-        pidDriveStraight.enable();
-        pidDriveVision.disable();
-
-        pidDriveDistance.setSetpoint(distance);
-        pidDriveStraight.setSetpoint(0.0);
-    }
-
-    //  [ Vision PID functions ]
-
-    public double getVisionPosX() { return Limelight.getPosX(); }
-    public boolean isAtVisionTarget() { return pidDriveVision.atSetpoint();}
-    public void goToVisionTarget() {
-
-        pidDriveAngle.disable();
-        pidDriveDistance.disable();
-        pidDriveStraight.disable();
-        pidDriveVision.enable();
-
-        pidDriveVision.setSetpoint(0.0);
-    }
+    // /Disable PIDS/
 
     public void disableAnglePID(){
         pidDriveAngle.disable();
@@ -154,6 +96,64 @@ public class Chassis {
     public void disableVisionPID(){
         pidDriveVision.disable();
     }
+
+    // [ Angle PID functions ]
+    
+    /* Comments to functions here apply to all following sections
+    */
+
+    public double getAngle() { return gyrDrive.getAngle(); } // Return the current angle (from gyro)
+    public void resetAngle() { gyrDrive.reset(); }
+    public boolean isAtAngle() { return pidDriveAngle.atSetpoint();} // Is true only if the desired angle has been calculated
+    public void goToAngle(double angle){ goToAngle(angle, false); }
+
+    // Overrides PID to reset if it is not already enabled or reset
+    public void goToAngle(double angle, boolean reset) {
+        if (!pidDriveAngle.isEnabled() || reset) {
+            pidDriveAngle.reset();
+            
+            resetAngle();
+          
+        }
+         enableAnglePID();
+
+        pidDriveAngle.setSetpoint(angle);
+    }
+
+
+    // [ Distance PID functions ]
+
+    public double getDistance() { return encDrive.getDistance(); }
+    public void resetDistance() { encDrive.reset(); }
+    public boolean isAtDistance() { return pidDriveDistance.atSetpoint() && pidDriveStraight.atSetpoint();}
+    public void goToDistance(double distance){ goToDistance(distance, false); }
+    public void goToDistance(double distance, boolean reset) {
+        if (!pidDriveDistance.isEnabled() || reset) {
+            pidDriveDistance.reset();
+            pidDriveStraight.reset();
+
+            resetAngle();
+            resetDistance();
+        }
+
+        enableDistancePID();
+
+        pidDriveDistance.setSetpoint(distance);
+        pidDriveStraight.setSetpoint(0.0);
+    }
+
+    //  [ Vision PID functions ]
+
+    public double getVisionPosX() { return Limelight.getPosX(); }
+    public boolean isAtVisionTarget() { return pidDriveVision.atSetpoint();}
+    public void goToVisionTarget() {
+
+        enableVisionPID();
+
+        pidDriveVision.setSetpoint(0.0);
+    }
+
+    
 
     public void disable(){
 

@@ -10,11 +10,13 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.molib.DashTable;
 import frc.robot.period.TeleOperated;
+import frc.robot.period.Test;
 import frc.robot.period.Autonomous;
 import frc.robot.subsystem.Chassis;
 import frc.robot.subsystem.Intake;
@@ -25,15 +27,17 @@ import frc.robot.subsystem.Shooter;
 
 public class Robot extends TimedRobot {
 
-    private static final Robot INSTANCE = new Robot();
-    public static Robot getInstance() { return INSTANCE; }
 
     private TeleOperated prdTeleOperated = TeleOperated.getInstance();
     private Autonomous prdAutonomous = Autonomous.getInstance();
+    private Test prdTest = Test.getInstance();
   
     private Chassis sysChassis = Chassis.getInstance();
     private Intake sysIntake = Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
+
+    private static final Robot INSTANCE = new Robot();
+    public static Robot getInstance() { return INSTANCE; }
 
     public static DashTable tblTroubleshooting = new DashTable("Troubleshooting");
 
@@ -50,7 +54,6 @@ public class Robot extends TimedRobot {
      
   @Override
      public void robotInit() {
-    
   }
 
  
@@ -74,12 +77,14 @@ public class Robot extends TimedRobot {
   @Override
     public void teleopPeriodic() {
         prdTeleOperated.update();
+        prdAutonomous.update();
+        
   }
 
  
   @Override
     public void testPeriodic() {
-    
+        prdTest.update();
   }
   
-}
+} 

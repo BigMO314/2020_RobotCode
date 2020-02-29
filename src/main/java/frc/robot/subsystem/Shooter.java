@@ -16,7 +16,7 @@ public class Shooter {
 
     private MagEncoder encFlywheel = new MagEncoder(mtrFlywheel_L);
 
-    private PIDController pidFlywheelSpeed = new PIDController (0 , 0 , 0);
+    private PIDController pidFlywheelSpeed = new PIDController (0.0 , 0.0003 , 0.0);
 
     
     
@@ -41,15 +41,14 @@ public class Shooter {
         mtrFlywheel_L.setInverted(false);
         mtrFlywheel_R.setInverted(true);  
 
-        encFlywheel.configDistancePerPulse(1.0/2048.0); // DPP
+        encFlywheel.configDistancePerPulse(60.0/2048.0); // DPP
 
         pidFlywheelSpeed.configOutputRange(-1.0, 1.0);
 
-        pidFlywheelSpeed.enable();
+        pidFlywheelSpeed.setTolerance(20.0);
     
     }
 
-   
 
     public void setHopper( double hopperPower ){
         this.hopperPower = hopperPower;
@@ -61,12 +60,23 @@ public class Shooter {
     }
 
     public double getFlywheelSpeed() { return encFlywheel.getRate(); }
-    public void setFlywheelSpeed(double speed) { pidFlywheelSpeed.setSetpoint(speed); }
+    public void setFlywheelSpeed(double speed) { 
+        
+        enableFlywheelPID();
+        pidFlywheelSpeed.setSetpoint(speed);
+     }
     public boolean isFlywheelAtSpeed() { return pidFlywheelSpeed.atSetpoint(); }
+
+    public void enableFlywheelPID(){ 
+        if(!pidFlywheelSpeed.isEnabled())
+            pidFlywheelSpeed.reset();
+        pidFlywheelSpeed.enable(); 
+    }
+    public void disableFlywheelPID(){ pidFlywheelSpeed.disable(); }
 
 
    
-    public void enableHoopper(){ setHopper(1.0);}
+    public void enableHoopper(){ setHopper(0.50);}
     public void enableFlywheel(){ setFlywheelSpeed(1.0);}
 
     public void disableHopper(){ setHopper(0.0); }
@@ -85,9 +95,11 @@ public class Shooter {
 
     public void update(){
         
-      
+        if (pidFlywheelSpeed.isEnabled()){
+            setFlywheel(pidFlywheelSpeed.calculate(encFlywheel.getRate()));
+        }
         
-        setFlywheel(pidFlywheelSpeed.calculate(encFlywheel.getRate()));
+        
             
         
         
