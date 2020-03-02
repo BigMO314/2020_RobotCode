@@ -76,8 +76,8 @@ public class Shooter {
 
 
    
-    public void enableHoopper(){ setHopper(0.50);}
-    public void enableFlywheel(){ setFlywheelSpeed(1.0);}
+    public void enableHoopper(){ setHopper(0.30);}
+    public void enableFlywheel(){ setFlywheelSpeed(4500.0);}
 
     public void disableHopper(){ setHopper(0.0); }
     public void disableFlywheel(){ setFlywheelSpeed(0.0);}

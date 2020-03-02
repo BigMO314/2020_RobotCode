@@ -64,24 +64,29 @@ public class Robot extends TimedRobot {
  
   @Override
     public void autonomousInit() {
-    
+        prdAutonomous.init();
   }
 
   
   @Override
     public void autonomousPeriodic() {
  
+        prdAutonomous.update();
   }
 
  
   @Override
     public void teleopPeriodic() {
         prdTeleOperated.update();
-        prdAutonomous.update();
         
   }
 
- 
+    @Override
+    public void testInit() {
+        prdTest.init();
+    }
+
+
   @Override
     public void testPeriodic() {
         prdTest.update();

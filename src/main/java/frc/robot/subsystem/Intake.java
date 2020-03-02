@@ -38,22 +38,20 @@ public class Intake{
         this.rollerPower = rollerPower;
     }
 
-    public void enableRoller(){ setRoller(0.50); }
+    public void enableRoller(){ setRoller(0.75); }
 
     public void disableRoller(){ setRoller(0.0); }
 
-    public void reverseRoller(){ setRoller(-1.0); }
+    public void reverseRoller(){ setRoller(-0.75); }
 
     // This function is the main update loop for the Intake.
     public void update(){
-        /* This set function allows for the solenoid to read two positions to control the arm. Reverse if true,
-        forward if not true.
+        /* This set function allows for the solenoid to read two positions to control the arm.
         */
         solArm.set(isArmExtended ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
         
 
         mtrRoller.set(ControlMode.PercentOutput , rollerPower);
     }
-    
     
 }

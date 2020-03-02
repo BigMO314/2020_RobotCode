@@ -21,6 +21,8 @@ public class Test {
 
 
     public void init(){
+
+        sysIntake.armExtend();
         
     }
     

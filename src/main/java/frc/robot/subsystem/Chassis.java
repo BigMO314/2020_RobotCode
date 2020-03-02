@@ -40,11 +40,11 @@ public class Chassis {
 
 
     public Chassis(){
-        mtrDrive_L1.setInverted(true);
-        mtrDrive_L2.setInverted(true);
+        mtrDrive_L1.setInverted(false);
+        mtrDrive_L2.setInverted(false);
 
-        mtrDrive_R1.setInverted(false);
-        mtrDrive_R2.setInverted(false);
+        mtrDrive_R1.setInverted(true);
+        mtrDrive_R2.setInverted(true);
     }
 
     // Two functions that set Tank drive and Arcade drive.
