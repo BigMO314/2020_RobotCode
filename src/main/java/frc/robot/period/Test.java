@@ -10,10 +10,16 @@ public class Test {
     private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
-    private Button btnRoller = new Button("Roller");
-    private Button btnArm = new Button("Intake Arm");
-    private Button btnHopper = new Button("Hopper");
-    private Button btnFlywheel = new Button("Flywheel");
+    private Button btnRoller = new Button("Test" ,"Roller");
+    private Button btnArm = new Button("Test" ,"Intake Arm");
+    private Button btnHopper = new Button("Test" ,"Hopper");
+    private Button btnFlywheel = new Button("Test" , "Flywheel");
+
+    private Button btnDistance = new Button("Test" , "Drive Distance");
+    private Button btnAngle = new Button("Test" , "Drive Angle");
+
+    private boolean lastPressed = false;
+
 
 
     private static final Test INSTANCE = new Test();
@@ -48,6 +54,11 @@ public class Test {
             sysShooter.setFlywheel(0.0);
         }
 
+
+        if (btnDistance.get() && !lastPressed){ sysChassis.goToDistance(22.0, true); }
+        if (!btnDistance.get()) sysChassis.disableDistancePID();
+
+        lastPressed = btnDistance.get();
 
         sysChassis.update();
         sysIntake.update(); 

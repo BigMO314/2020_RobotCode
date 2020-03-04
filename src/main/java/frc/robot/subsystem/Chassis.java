@@ -26,7 +26,7 @@ public class Chassis {
     private final AHRS gyrDrive = new AHRS(); 
 
     private PIDController pidDriveAngle = new PIDController(0.0, 0.0, 0.0);
-    private PIDController pidDriveDistance = new PIDController(0.0, 0.0, 0.0);
+    private PIDController pidDriveDistance = new PIDController(0.03 , 0.0 , 0.0);
     private PIDController pidDriveStraight = new PIDController(0.0 , 0.0 , 0.0); // Helps to prevent the Drivetrain from drifting
     private PIDController pidDriveVision = new PIDController(0.0 , 0.0 , 0.0); // Limelight PID
    
@@ -40,11 +40,22 @@ public class Chassis {
 
 
     public Chassis(){
+
+        encDrive.reset();
+        gyrDrive.reset(); 
+        
+        encDrive.configDistancePerPulse(((6.0 * Math.PI) / 10.71) / 2040.0);
+
+        pidDriveDistance.setTolerance(0.25);
+        pidDriveDistance.configOutputRange(-0.375, 0.375);
+        pidDriveStraight.configOutputRange(-0.25, 0.25);
+
         mtrDrive_L1.setInverted(false);
         mtrDrive_L2.setInverted(false);
 
         mtrDrive_R1.setInverted(true);
         mtrDrive_R2.setInverted(true);
+
     }
 
     // Two functions that set Tank drive and Arcade drive.
@@ -86,10 +97,7 @@ public class Chassis {
     }
 
     public void disableDistancePID(){
-        pidDriveDistance.disable();
-    }
-
-    public void disableStraightPID(){
+        pidDriveDistance.disable(); 
         pidDriveStraight.disable();
     }
     
@@ -159,14 +167,13 @@ public class Chassis {
 
         disableAnglePID();
         disableDistancePID();
-        disableStraightPID();
         disableVisionPID();
 
         setDrive( 0.0 , 0.0 );
     }
 
     public void init(){
-
+        gyrDrive.reset();
     }
 
     // Main update loop for the Chassis

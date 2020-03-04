@@ -7,14 +7,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.molib.DashTable;
+import frc.molib.humancontrols.buttons.ButtonScheduler;
 import frc.robot.period.TeleOperated;
 import frc.robot.period.Test;
 import frc.robot.period.Autonomous;
@@ -48,38 +44,44 @@ public class Robot extends TimedRobot {
         INSTANCE.sysShooter.disable();
 
     }
+
+
+
+
+    @Override
+    public void robotInit() {
+    }
+
+
+    @Override
+    public void robotPeriodic() {
     
+        ButtonScheduler.getInstance().update();
 
-    
-     
-  @Override
-     public void robotInit() {
-  }
+    }
 
- 
-  @Override
-     public void robotPeriodic() {
-  }
 
- 
-  @Override
+    @Override
     public void autonomousInit() {
         prdAutonomous.init();
-  }
+    }
 
-  
-  @Override
+
+    @Override
     public void autonomousPeriodic() {
- 
-        prdAutonomous.update();
-  }
 
- 
-  @Override
+        prdAutonomous.update();
+    }
+
+    @Override
+    public void teleopInit() {
+        prdTeleOperated.init();
+    }
+    @Override
     public void teleopPeriodic() {
         prdTeleOperated.update();
-        
-  }
+
+    }
 
     @Override
     public void testInit() {
@@ -87,9 +89,9 @@ public class Robot extends TimedRobot {
     }
 
 
-  @Override
+    @Override
     public void testPeriodic() {
         prdTest.update();
-  }
-  
+    }
+
 } 

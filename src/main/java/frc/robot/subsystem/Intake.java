@@ -38,11 +38,15 @@ public class Intake{
         this.rollerPower = rollerPower;
     }
 
-    public void enableRoller(){ setRoller(0.75); }
+    public void enableRoller(){ setRoller(0.50); }
 
     public void disableRoller(){ setRoller(0.0); }
 
-    public void reverseRoller(){ setRoller(-0.75); }
+    public void reverseRoller(){ setRoller(-0.50); }
+
+    public void init() {
+        
+    }
 
     // This function is the main update loop for the Intake.
     public void update(){
