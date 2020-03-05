@@ -7,6 +7,7 @@ import frc.molib.DashTable.DashEntry;
 import frc.molib.humancontrols.XboxController;
 import frc.molib.humancontrols.buttons.Button;
 import frc.molib.humancontrols.buttons.ButtonScheduler;
+import frc.molib.vision.Limelight;
 import frc.robot.Robot;
 import frc.robot.subsystem.Chassis;
 import frc.robot.subsystem.Intake;
@@ -24,6 +25,7 @@ public class TeleOperated {
     private Timer tmrIntake = new Timer();
     private Timer tmrShooter = new Timer();
 
+    private Button btnAlign = new Button("TeleOp" , "Align") { @Override public boolean get() { return ctlDriver.getAButton(); } };
     private Button btnIntake = new Button("TeleOp" , "Intake") { @Override public boolean get() { return ctlDriver.getBumper(Hand.kLeft); } };
     private Button btnHopper = new Button("TeleOp" , "Hopper") { @Override public boolean get() { return ctlDriver.getBumper(Hand.kRight);} };
     private Button btnFlywheel = new Button("TeleOp" , "Flywheel") { @Override public boolean get() { return ctlDriver.getTriggerButton(Hand.kRight); } };
@@ -52,7 +54,14 @@ public class TeleOperated {
         // - DRIVER CONTROLS - (Chassis, Indexing System, Shooter)
 
         //Chassis
-        sysChassis.setArcade(-ctlDriver.getY(Hand.kLeft) , ctlDriver.getX(Hand.kRight) * 0.75);
+        if(btnAlign.get()) {
+            sysChassis.enableVisionPID();
+            Limelight.setLEDMode(Limelight.LEDMode.kOn);
+        } else {
+            sysChassis.disableVisionPID();
+            Limelight.setLEDMode(Limelight.LEDMode.kOff);
+            sysChassis.setArcade(-ctlDriver.getY(Hand.kLeft) * 0.75, ctlDriver.getX(Hand.kRight) * 0.375);
+        }
 
         // Shooter
         if (ctlDriver.getTriggerButton(Hand.kRight)){  

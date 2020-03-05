@@ -45,7 +45,7 @@ public class Shooter {
 
         pidFlywheelSpeed.configOutputRange(-1.0, 1.0);
 
-        pidFlywheelSpeed.setTolerance(20.0);
+        pidFlywheelSpeed.setTolerance(20.0, 200.0);
     
     }
 
@@ -74,9 +74,9 @@ public class Shooter {
     }
     public void disableFlywheelPID(){ pidFlywheelSpeed.disable(); }
 
-
+ 
    
-    public void enableHoopper(){ setHopper(0.30);}
+    public void enableHoopper(){ setHopper(0.40);}
     public void enableFlywheel(){ setFlywheelSpeed(4500.0);}
 
     public void disableHopper(){ setHopper(0.0); }

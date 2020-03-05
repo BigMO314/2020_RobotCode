@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-
+import frc.molib.Console;
 import frc.molib.PIDController;
 import frc.molib.sensors.MagEncoder;
 import frc.molib.vision.Limelight;
@@ -25,10 +25,10 @@ public class Chassis {
 
     private final AHRS gyrDrive = new AHRS(); 
 
-    private PIDController pidDriveAngle = new PIDController(0.0, 0.0, 0.0);
+    private PIDController pidDriveAngle = new PIDController(0.0092, 0.0, 0.0001);
     private PIDController pidDriveDistance = new PIDController(0.03 , 0.0 , 0.0);
     private PIDController pidDriveStraight = new PIDController(0.0 , 0.0 , 0.0); // Helps to prevent the Drivetrain from drifting
-    private PIDController pidDriveVision = new PIDController(0.0 , 0.0 , 0.0); // Limelight PID
+    private PIDController pidDriveVision = new PIDController(0.02 , 0.0 , 0.0); // Limelight PID
    
 
 
@@ -40,16 +40,20 @@ public class Chassis {
 
 
     public Chassis(){
-
-        encDrive.reset();
-        gyrDrive.reset(); 
         
         encDrive.configDistancePerPulse(((6.0 * Math.PI) / 10.71) / 2040.0);
+        
+        pidDriveAngle.setTolerance(2.0, 0.1);
+        pidDriveAngle.configOutputRange(-0.125, 0.125);
 
         pidDriveDistance.setTolerance(0.25);
         pidDriveDistance.configOutputRange(-0.375, 0.375);
         pidDriveStraight.configOutputRange(-0.25, 0.25);
 
+        pidDriveVision.setTolerance(0.0);
+        pidDriveVision.configOutputRange(-0.25, 0.25);
+
+        
         mtrDrive_L1.setInverted(false);
         mtrDrive_L2.setInverted(false);
 
@@ -84,10 +88,10 @@ public class Chassis {
     }
 
     public void enableVisionPID(){ 
-        pidDriveAngle.enable();
+        pidDriveAngle.disable();
         pidDriveDistance.disable();
         pidDriveStraight.disable();
-        pidDriveVision.disable();
+        pidDriveVision.enable();
     }
 
     // /Disable PIDS/
@@ -173,7 +177,7 @@ public class Chassis {
     }
 
     public void init(){
-        gyrDrive.reset();
+        
     }
 
     // Main update loop for the Chassis
@@ -183,8 +187,10 @@ public class Chassis {
         if (pidDriveDistance.isEnabled()) {
             setArcade(pidDriveDistance.calculate(getDistance()) , pidDriveStraight.calculate(getAngle()));
         } else if (pidDriveAngle.isEnabled()) {
-            setArcade(0.0, pidDriveStraight.calculate(getAngle()));
-        }  
+            setArcade(0.0, pidDriveAngle.calculate(getAngle()));
+        } else if (pidDriveVision.isEnabled() && Limelight.hasTarget()) {
+            setArcade(0.0, -pidDriveVision.calculate(getVisionPosX()));
+        }
 
         mtrDrive_L1.set(ControlMode.PercentOutput , lPower);
         mtrDrive_L2.set(ControlMode.PercentOutput , lPower);

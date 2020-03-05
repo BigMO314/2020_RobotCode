@@ -1,6 +1,9 @@
 package frc.robot.period;
 
+import frc.molib.Console;
 import frc.molib.humancontrols.buttons.Button;
+import frc.molib.humancontrols.buttons.ButtonScheduler;
+import frc.molib.vision.Limelight;
 import frc.robot.subsystem.Chassis;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
@@ -10,6 +13,7 @@ public class Test {
     private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
 
+    private Button btnAlign = new Button("Test", "Align");
     private Button btnRoller = new Button("Test" ,"Roller");
     private Button btnArm = new Button("Test" ,"Intake Arm");
     private Button btnHopper = new Button("Test" ,"Hopper");
@@ -29,11 +33,22 @@ public class Test {
     public void init(){
 
         sysIntake.armExtend();
+        sysChassis.disable();
         
     }
     
 
     public void update(){
+
+        ButtonScheduler.getInstance().update();
+
+        if (btnAlign.get()) {
+            sysChassis.enableVisionPID();
+            Limelight.setLEDMode(Limelight.LEDMode.kOn);
+        } else {
+            sysChassis.disableVisionPID();
+            Limelight.setLEDMode(Limelight.LEDMode.kOff);
+        }
 
         if (btnRoller.get()){
            sysIntake.enableRoller(); 
@@ -54,11 +69,14 @@ public class Test {
             sysShooter.setFlywheel(0.0);
         }
 
+        if (btnDistance.getPressed() && !btnAngle.get()){ sysChassis.goToDistance(22.0, true); }
+        else if (btnAngle.getPressed() && !btnDistance.get()){ sysChassis.goToAngle(150.0, true); }
 
-        if (btnDistance.get() && !lastPressed){ sysChassis.goToDistance(22.0, true); }
         if (!btnDistance.get()) sysChassis.disableDistancePID();
+        if (!btnAngle.get()) sysChassis.disableAnglePID();
 
-        lastPressed = btnDistance.get();
+        if(!btnDistance.get() && !btnAngle.get() && !btnAlign.get()) sysChassis.disable();
+
 
         sysChassis.update();
         sysIntake.update(); 

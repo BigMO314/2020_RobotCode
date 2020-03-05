@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.molib.DashTable;
 import frc.molib.humancontrols.buttons.ButtonScheduler;
+import frc.molib.vision.Limelight;
 import frc.robot.period.TeleOperated;
 import frc.robot.period.Test;
 import frc.robot.period.Autonomous;
@@ -50,6 +51,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        Limelight.setLEDMode(Limelight.LEDMode.kOff);
     }
 
 
@@ -58,6 +60,11 @@ public class Robot extends TimedRobot {
     
         ButtonScheduler.getInstance().update();
 
+    }
+
+    @Override
+    public void disabledInit() {
+        Limelight.setLEDMode(Limelight.LEDMode.kOff);
     }
 
 
