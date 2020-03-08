@@ -1,10 +1,10 @@
 package frc.robot.period;
 
-import frc.molib.Console;
 import frc.molib.humancontrols.buttons.Button;
 import frc.molib.humancontrols.buttons.ButtonScheduler;
 import frc.molib.vision.Limelight;
 import frc.robot.subsystem.Chassis;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
@@ -12,6 +12,7 @@ public class Test {
     private Chassis sysChassis = Chassis.getInstance();
     private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
+    private Climber sysClimber = Climber.getInstance();
 
     private Button btnAlign = new Button("Test", "Align");
     private Button btnRoller = new Button("Test" ,"Roller");
@@ -21,10 +22,6 @@ public class Test {
 
     private Button btnDistance = new Button("Test" , "Drive Distance");
     private Button btnAngle = new Button("Test" , "Drive Angle");
-
-    private boolean lastPressed = false;
-
-
 
     private static final Test INSTANCE = new Test();
     public static Test getInstance() { return INSTANCE; }
@@ -59,7 +56,7 @@ public class Test {
         } else sysIntake.armRetract();
 
         if (btnHopper.get()){
-            sysShooter.enableHoopper();
+            sysShooter.enableHopper();
         } else sysShooter.disableHopper();
 
         if (btnFlywheel.get()){
@@ -81,6 +78,7 @@ public class Test {
         sysChassis.update();
         sysIntake.update(); 
         sysShooter.update();
+        sysClimber.update();
 
 
         

@@ -38,11 +38,11 @@ public class Intake{
         this.rollerPower = rollerPower;
     }
 
-    public void enableRoller(){ setRoller(1.0); }
+    public void enableRoller(){ setRoller(0.65); }
 
     public void disableRoller(){ setRoller(0.0); }
 
-    public void reverseRoller(){ setRoller(-1.0); }
+    public void reverseRoller(){ setRoller(-0.65); }
 
     public void init() {
         

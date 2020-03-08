@@ -16,6 +16,7 @@ import frc.robot.period.TeleOperated;
 import frc.robot.period.Test;
 import frc.robot.period.Autonomous;
 import frc.robot.subsystem.Chassis;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
     private Chassis sysChassis = Chassis.getInstance();
     private Intake sysIntake = Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
+    private Climber sysClimber = Climber.getInstance();
 
     private static final Robot INSTANCE = new Robot();
     public static Robot getInstance() { return INSTANCE; }
@@ -43,6 +45,16 @@ public class Robot extends TimedRobot {
         INSTANCE.sysChassis.disable();
         INSTANCE.sysIntake.disableRoller();
         INSTANCE.sysShooter.disable();
+        INSTANCE.sysClimber.disable();
+
+    }
+
+    public static void initSystems(){
+
+        INSTANCE.sysChassis.init();
+        INSTANCE.sysIntake.init();
+        INSTANCE.sysShooter.init();
+        INSTANCE.sysClimber.init();
 
     }
 

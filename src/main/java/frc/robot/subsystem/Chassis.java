@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-import frc.molib.Console;
 import frc.molib.PIDController;
 import frc.molib.sensors.MagEncoder;
 import frc.molib.vision.Limelight;
@@ -176,7 +175,15 @@ public class Chassis {
         setDrive( 0.0 , 0.0 );
     }
 
+    public void disablePIDs() {
+        disableAnglePID();
+        disableDistancePID();
+        disableVisionPID();
+    }
+
     public void init(){
+
+        disablePIDs();
         
     }
 

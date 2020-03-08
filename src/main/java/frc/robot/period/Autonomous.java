@@ -6,9 +6,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.molib.Console;
 import frc.robot.Robot;
 import frc.robot.subsystem.Chassis;
+import frc.robot.subsystem.Climber;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
 
+@SuppressWarnings("unused")
 public class Autonomous {
     public enum Sequence { 
         kNone("Do Nothing") ,
@@ -16,8 +18,10 @@ public class Autonomous {
         kCrossLineBackward("Cross Line: Drive Backward"),
         kThreeBallForward("Three Ball: Drive Forward"),
         kThreeBallBackward("Three Ball: Drive Backward"),
-        kFiveBallForward("Five Ball: Drive Forward"),
-        kFiveBallBackward("Five Ball: Drive Backward");
+        kFiveBallForward("Five Ball: Drive Forward - Incomplete"),
+        kFiveBallBackward("Five Ball: Drive Backward - Incomplete"),
+        kTrench("Trench");
+        
         
 
         public final String label;
@@ -43,6 +47,7 @@ public class Autonomous {
     private Chassis sysChassis = Chassis.getInstance();
     private Intake sysIntake =  Intake.getInstance();
     private Shooter sysShooter = Shooter.getInstance();
+    private Climber sysClimber = Climber.getInstance();
 
     private SendableChooser<Sequence> chsSequence = new SendableChooser<Sequence>();
     private Sequence selectedSequence;
@@ -63,22 +68,25 @@ public class Autonomous {
         chsSequence.setDefaultOption(Sequence.kNone.label , Sequence.kNone);
 
         SmartDashboard.putData("Autonomous Sequence" , chsSequence);
-
+        /*
         for(Position tempPosition : Position.values())
             chsPosition.addOption(tempPosition.label , tempPosition);
         SmartDashboard.putData("Position Selector" , chsPosition);
+        */
     }
 
 
     public void init(){
-
+        Console.logMsg("Autonomous initializing...");
+        Robot.initSystems();
         Robot.disableSystems();
-        
+        Console.logMsg("Systems disabled");
         stage = 0;
 
         selectedSequence = chsSequence.getSelected();
-
+        Console.logMsg("Sequence read");
         tmrTimeout.start();
+        Console.logMsg("Timer started");
     }
 
     private void sequence_kNone(){
@@ -91,7 +99,7 @@ public class Autonomous {
 
             case 2 : Console.logMsg("End Sequence: \"" + Sequence.kNone.label + "\""); stage++; break;
 
-            default : // No.
+            default : Robot.disableSystems();
         }
     }
 
@@ -144,7 +152,7 @@ public class Autonomous {
                 stage++; break;
 
             case 2 : 
-                sysShooter.enableFlywheel(); 
+                sysShooter.enableFlywheelNear(); 
                 sysIntake.armExtend(); 
                 stage++; break;
             
@@ -152,7 +160,7 @@ public class Autonomous {
                 if (sysShooter.isFlywheelAtSpeed()) stage++; break;
 
             case 4 : Console.logMsg("Shooting balls..."); 
-                sysShooter.enableHoopper(); 
+                sysShooter.enableHopper(); 
                 sysIntake.enableRoller();
                 tmrTimeout.reset(); 
                 stage++; break;
@@ -189,7 +197,7 @@ public class Autonomous {
                 stage++; break;
 
             case 2 : 
-                sysShooter.enableFlywheel(); 
+                sysShooter.enableFlywheelNear(); 
                 sysIntake.armExtend(); 
                 stage++; break;
             
@@ -197,7 +205,7 @@ public class Autonomous {
                 if (sysShooter.isFlywheelAtSpeed()) stage++; break;
 
             case 4 : Console.logMsg("Shooting balls..."); 
-                sysShooter.enableHoopper(); 
+                sysShooter.enableHopper(); 
                 sysIntake.enableRoller();
                 tmrTimeout.reset(); 
                 stage++; break;
@@ -231,11 +239,11 @@ public class Autonomous {
 
             case 1 : Console.logMsg("Shooting balls.."); stage++; break;
 
-            case 2 : sysShooter.enableFlywheel(); sysIntake.armExtend(); stage ++; break;
+            case 2 : sysShooter.enableFlywheelNear(); sysIntake.armExtend(); stage ++; break;
             
             case 3 : if (sysShooter.isFlywheelAtSpeed()) stage++; break;
 
-            case 4 : sysShooter.enableHoopper(); tmrTimeout.reset(); stage++; break;
+            case 4 : sysShooter.enableHopper(); tmrTimeout.reset(); stage++; break;
             
             case 5 : if (tmrTimeout.get() > 5.0); stage++; break;
 
@@ -258,11 +266,11 @@ public class Autonomous {
 
             case 1 : Console.logMsg("Getting Flywheel up to speed..."); stage++; break;
 
-            case 2 : sysShooter.enableFlywheel(); sysIntake.armExtend(); stage ++; break;
+            case 2 : sysShooter.enableFlywheelNear(); sysIntake.armExtend(); stage ++; break;
             
             case 3 : if (sysShooter.isFlywheelAtSpeed()) stage++; break;
 
-            case 4 : Console.logMsg("Shooting balls..."); sysShooter.enableHoopper(); tmrTimeout.reset(); stage++; break;
+            case 4 : Console.logMsg("Shooting balls..."); sysShooter.enableHopper(); tmrTimeout.reset(); stage++; break;
             
             case 5 : if (tmrTimeout.get() > 7.0) ; stage++; break;
 
@@ -275,6 +283,93 @@ public class Autonomous {
             default : Robot.disableSystems();
     }
     }
+
+    private void sequence_kTrench(){
+
+        switch(stage){
+
+            case 0 : Console.logMsg("Start Sequence: \"" + Sequence.kTrench.label +  "\""); 
+                stage++; break;
+
+            case 1 : Console.logMsg("Turning left 32 degrees, getting flywheel up to speed..."); 
+                sysChassis.goToAngle(-32.0); 
+                sysIntake.armExtend();
+                sysShooter.enableFlywheelNear(); 
+                tmrTimeout.reset(); 
+                stage++; break;
+
+            case 2 : 
+                if (sysShooter.isFlywheelAtSpeed() && (sysChassis.isAtAngle() || tmrTimeout.get() > 2.0)) stage ++; break;
+
+            case 3 : Console.logMsg("Shooting balls..."); 
+                sysChassis.disableAnglePID();
+                sysIntake.enableRoller();
+                sysShooter.enableHopper();
+                tmrTimeout.reset(); 
+                stage++; break;
+            
+            case 4 : 
+                if (tmrTimeout.get() > 2.0) stage++; break; // Was 2.5
+            
+            case 5 : Console.logMsg("Turning left 155 degrees..."); 
+                sysChassis.goToAngle(-155.0); 
+                sysIntake.disableRoller(); 
+                sysShooter.disable(); 
+                tmrTimeout.reset();
+                stage++ ; break;
+
+            case 6 :  
+                if (sysChassis.isAtAngle() || tmrTimeout.get() > 3.0) stage++; break;
+
+            case 7 : Console.logMsg("Enabling roller, driving forward 12'..."); 
+                sysChassis.disableAnglePID();
+                sysChassis.goToDistance(144.0); 
+                sysIntake.enableRoller();
+                tmrTimeout.reset();
+                stage++; break;
+
+            case 8 : 
+                if (sysChassis.isAtDistance() || tmrTimeout.get() > 2.75) stage++; break;
+
+             case 9 : Console.logMsg("Disabling Intake, turning right 165 degrees..."); 
+                sysChassis.disableDistancePID();
+                sysChassis.goToAngle(165.0);
+                //sysIntake.armRetract();
+                sysIntake.disableRoller();
+                tmrTimeout.reset(); 
+                stage++; break;
+            
+            case 10 : 
+                if (sysChassis.isAtAngle() || tmrTimeout.get() > 3.0) stage++; break;
+
+            case 11 :  Console.logMsg("Driving forward 6.5' and getting flywheel up to speed..."); 
+                sysChassis.disableAnglePID();
+                sysChassis.goToDistance(78.0);
+                sysShooter.enableFlywheelFar();
+                tmrTimeout.reset(); 
+                stage++; break;
+
+            case 12 : 
+                if ((sysChassis.isAtDistance() && sysShooter.isFlywheelAtSpeed())|| tmrTimeout.get() > 3.0) stage++; break;
+
+
+            case 14 : Console.logMsg("Shooting balls..."); 
+                sysChassis.disableDistancePID();
+                sysIntake.enableRoller();
+                sysShooter.enableHopper(); 
+                tmrTimeout.reset(); 
+                stage++; break;
+            
+            case 15 : 
+                if (tmrTimeout.get() > 4.0) stage++; break;
+
+            case 16 : Console.logMsg("End Sequence: \"" + Sequence.kTrench.label + "\""); stage++; break;
+
+            default : Robot.disableSystems();
+            
+        }
+    }
+
 
     public void update(){
         
@@ -294,12 +389,16 @@ public class Autonomous {
 
             case kFiveBallBackward : sequence_kFiveBallBackward(); break;
 
+            case kTrench : sequence_kTrench(); break;
+
+
             default : // Do ABSOLUTELY nothing.
         }
 
         sysChassis.update();
         sysIntake.update();
         sysShooter.update();
+        sysClimber.update();
         
         
     }
